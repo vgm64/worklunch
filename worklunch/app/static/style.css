@@ -4,7 +4,18 @@ html, body, #map-canvas {
   padding: 0;
 }
 
-#panel {
+#db_select {
+  position: absolute;
+  top: 5px;
+  left: 20%;
+  margin-left: -180px;
+  z-index: 5;
+  background-color: #fff;
+  padding: 5px;
+  border: 1px solid #999;
+}
+
+#geobox {
   position: absolute;
   top: 5px;
   left: 50%;

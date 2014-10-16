@@ -1,6 +1,8 @@
-from flask import render_template, request, redirect, url_for, send_from_directory
+from flask import render_template, request, jsonify
+#from flask import redirect, url_for, send_from_directory
 from app import app
 import sqlite3
+import json
 
 # ROUTING/VIEW FUNCTIONS
 @app.route('/')
@@ -14,3 +16,11 @@ def _read_db():
   #c = conn.cursor()
   import random
   return str(random.random())
+
+@app.route('/_add_to_db', methods=['GET'])
+def _add_to_db():
+  data = request.args.get('data')
+  print "Request Args:", request.args
+  print data, type(data)
+  print jsonify(result=data)
+  return jsonify(result=str(data))
