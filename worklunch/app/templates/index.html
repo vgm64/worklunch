@@ -42,7 +42,22 @@ function add_to_db() {
   $.ajax({
       type: "GET",
       url: "_add_to_db",
-      data: {data: $("#address").val()}
+      data: {data: $("#address").val(),
+          db: current_db},
+      success: handle_add_to_db 
+  });
+}
+
+function handle_add_to_db (data) {
+  console.log(data);
+}
+
+function get_all_from_db() {
+  $.ajax({
+      type: "GET",
+      url: "_add_to_db",
+      data: {data: $("#address").val(),
+          db: current_db}
   });
 }
 
