@@ -13,10 +13,16 @@ def index():
 
 @app.route('/_read_db', methods=['GET'])
 def _read_db():
-  #conn = sqlite3.connect("static/records.db")
-  #c = conn.cursor()
-  import random
-  return str(random.random())
+  current_db = request.args.get('data')
+  conn = sqlite3.connect("app/static/default.db")
+  c = conn.cursor()
+  c.execute("SELECT * FROM geolocs")
+  result = c.fetchall()
+  print result
+  print jsonify(locations=result)
+  print "HIII"
+  #if result
+  return jsonify(locations=result)
 
 @app.route('/_add_to_db', methods=['GET'])
 def _add_to_db():
@@ -35,12 +41,12 @@ def _add_to_db():
     #return
   conn = sqlite3.connect(db_path)
   c = conn.cursor()
-  c.execute("CREATE TABLE geolocs (loc text)")
   print data, repr(data)
+  #c.execute("CREATE TABLE geolocs (loc text UNIQUE)")
   c.execute("INSERT INTO geolocs VALUES (?)", (data,))
   conn.commit()
 
   print "Request Args:", request.args
   print data, type(data)
-  print jsonify(result=data)
-  return jsonify(result=str(data))
+  print jsonify(result=data, data=data)
+  return jsonify(result="OK", data=data)

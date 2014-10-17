@@ -21,8 +21,36 @@ function initialize() {
       mapOptions);
 }
 
-function codeAddress() {
-  var address = document.getElementById("address").value;
+function geocode(address) {
+  console.log("1. " + address);
+  if(typeof(address)=='undefined')
+    address = document.getElementById("address").value;
+  console.log("2. " + address);
+  console.log("3. " + typeof(address));
+  geocoder.geocode( { 'address': address}, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      return results[0].geometry.location;
+      });
+    } else {
+      alert('Geocode was not successful for the following reason: ' + status);
+    }
+  });
+}
+
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+//      You've just created the geocode function above.
+//      Now you need to change things to be:
+//      Add address to db -> geocode to get latlon ->
+//      place marker by latlon -> store address and latlon in db.
+////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////
+function placeMarker(address) {
+  console.log("1. " + address);
+  if(typeof(address)=='undefined')
+    address = document.getElementById("address").value;
+  console.log("2. " + address);
+  console.log("3. " + typeof(address));
   geocoder.geocode( { 'address': address}, function(results, status) {
     if (status == google.maps.GeocoderStatus.OK) {
       map.setCenter(results[0].geometry.location);
@@ -50,23 +78,49 @@ function add_to_db() {
 
 function handle_add_to_db (data) {
   console.log(data);
+  if(data.result=='OK') {
+    console.log("geomarker added:" + data.data);
+  }
+  else {alert("Add failed!");}
 }
 
-function get_all_from_db() {
+function load_from_db() {
+  //$.ajax({
+  //    type: "GET",
+  //    url: "_read_db",
+  //    data: {data: $("#address").val(),
+  //        db: current_db}
+  //});
   $.ajax({
       type: "GET",
-      url: "_add_to_db",
-      data: {data: $("#address").val(),
-          db: current_db}
-  });
+      url: "_read_db",
+      data: {current_db: current_db},
+      success: function(result) {
+      console.log("result logged:");
+      console.log(result);
+      console.log(result.locations);
+      $.each(result.locations, function(i, field) {
+          //console.log("SHOULD BE JUST SF:");
+          //console.log(field[0]);
+          //console.log(typeof(field));
+          //console.log(field);
+          //console.log(field.keys()[0]);
+          //console.log(">>" +i+' '+field + ', ' + typeof(field) + ", " + field.value);
+          //add
+          placeMarker(field[0]);
+          });
+        }
+      });
 }
 
 $(document).ready(function() {
-  // Select db.
+  // Load database.
   // TODO Sanitize user input!
-  $("#db_submit").click(function(){
+  $("#db_select").click(function(){
       current_db = $('#db_text').val();
       $("#infobox").text(current_db);
+
+      load_from_db();
       //$.getJSON("
       //$.getJSON("_read_db", function(result) {
         //$("#infobox").text(result);
@@ -74,12 +128,12 @@ $(document).ready(function() {
       //$("#infobox").text('hi');
     });
 
-  // Select db.
+  // Submit new geolocation.
   // TODO Sanitize user input!
   console.log("HI");
   $("#geobox_submit").click(function() {
     console.log($("#address").val());
-    codeAddress();
+    placeMarker();
     add_to_db();
     
   });
@@ -91,9 +145,9 @@ $(document).ready(function() {
 <div id="infobox">
 Test
 </div>
-<div id="db_select">
+<div id="db_select_box">
   <input id="db_text" type="textbox" placeholder="Enter DB">
-  <input id= "db_submit" type="button" value="Select">
+  <input id= "db_select" type="button" value="Select">
 </div>
 <div id="geobox">
   <input id="address" type="textbox" placeholder="Enter Address">
