@@ -4,7 +4,7 @@ html, body, #map-canvas {
   padding: 0;
 }
 
-#db_select {
+#db_select_box {
   position: absolute;
   top: 5px;
   left: 20%;
